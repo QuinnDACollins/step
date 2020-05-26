@@ -1,4 +1,13 @@
+h1 {
+  color:#FFFFFF;
+  font-family: sans-serif;
+}
+body {
+    background: #C2E812;
+}
 #content {
+  font-family: sans-serif;
+  background: #BFCBC2; 
   margin-left: auto;
   margin-right: auto;
   width: 650px;
