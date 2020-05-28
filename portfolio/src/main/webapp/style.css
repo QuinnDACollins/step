@@ -1,18 +1,25 @@
 h1 {
-  color:#FFFFFF;
-  font-family: sans-serif;
+    text-align: center;
 }
 body {
-    background: #C2E812;
+    background: #C1BDB3;
+}
+
+.text-link {
+    font-weight: bold;
 }
 #content {
-  font-family: sans-serif;
-  background: #BFCBC2; 
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+    font-family: sans-serif;
+    background: #3D3B3C; 
+    color:#FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0%;
+    padding: 1%;
+    width: 650px;
+    border-color: #CE7B91;
 }
 
 #greeting-container {
-  margin-top: 20px;
+    margin-top: 20px;
 }
