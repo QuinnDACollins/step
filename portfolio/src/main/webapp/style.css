@@ -12,14 +12,59 @@ body {
     font-family: sans-serif;
     background: #3D3B3C; 
     color:#FFFFFF;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 33%;
+    margin-right: 33%;
     margin-top: 0%;
     padding: 1%;
-    width: 650px;
+    width: 30%;
+    height: 100%;
+    border-style: dashed;
     border-color: #CE7B91;
 }
+#fact-box-1 {
+    transform: rotate(-90deg); 
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform: rotate(-90deg); 
+    float: left;
+    margin-top: 30%;
+    width: 30%;
+    height: 100%;
 
+}
+
+#fact-button {
+    width: 100%;
+    background: #C1BDB3;
+    color:#3D3B3C;
+    border-style: none;
+}
+
+#pics {
+    width: 200px;
+    height: 200px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-bottom: auto;
+    margin-right: 5%;
+    border-style:solid;
+    border-style: #FFFFFF;
+}
+#fact-box-2 {
+    transform: rotate(-90deg); 
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform: rotate(-90deg); 
+    float: right;
+
+    width: 30%;
+    height: 100%;
+
+}
+.fact-text {
+    font-size: 24px;
+    font-family: sans-serif;
+    color: #CE7B91;
+}
 #greeting-container {
     margin-top: 20px;
 }
+
