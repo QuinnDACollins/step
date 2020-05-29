@@ -13,16 +13,34 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Adds a fact greeting to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+  const facts =
+      ['I\'ve read all of One Piece', 'I like Winnie the Pooh!', 'Favourite pianist is either Ahmad Jamal or Ryo Fukui', 'Took 2 years of Chinese!', 'My cat\'s name is Kai!', 'I interned at Google!', 'Why are these sideways!?', 'I have 2 brothers!', 'I like to bake pastries!'];
+
+function addFact() {
+
 
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  if(facts.length == 0){
+      alert("I'm all out of facts, sorry!");
+      return;
+  }
+  const factIndex = Math.floor(Math.random() * facts.length)
+  const fact = facts[factIndex];
+  facts.splice(factIndex, 1);
+  // Add it to the page, randomly selecting one of 2 divs to add it to
+  const rand_padding = Math.floor(Math.random() * 100)
+  const fact_element = document.createElement('div');
+  fact_element.setAttribute("class", "fact-text");
+  fact_element.setAttribute("style", "margin-left: "  + rand_padding.toString() + "%;");
+  fact_element.innerText = "\n" + fact;
 
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  if (Math.floor(Math.random() * 2) == 0) {
+      document.getElementById("fact-box-1").append(fact_element);
+  } else {
+      document.getElementById("fact-box-2").append(fact_element);
+  }
+
 }
+
