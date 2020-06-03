@@ -15,12 +15,12 @@ package com.google.sps.data;
 import java.util.Date;
 
 public final class Comment{
-    private final String user;
-    private final String content;
-    private final Date post_date;
-    public Comment(String _user, String _content, Date _post_date){
+    private final Object user;
+    private final Object content;
+    private final Object timestamp;
+    public Comment(Object _user, Object _content, Object _timestamp){
         this.user = _user;
         this.content = _content;
-        this.post_date = _post_date;
+        this.timestamp = _timestamp;
     }
 }

@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
 
 import javax.servlet.annotation.WebServlet;
@@ -33,36 +39,33 @@ public class DataServlet extends HttpServlet {
     ArrayList<String> messages = new ArrayList<>();
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json;");
-    //Intialize a new array to be filled with comments as JSON Objects
-    String[] json_comment_array = new String[messages.size()];
-
-
-    for(int i = 0; i < messages.size(); i++){
-        Date current_date = new Date();
-        Comment c = new Comment("None", messages.get(i), current_date);
-        String comment_as_json = commentToJson(c);
-        json_comment_array[i] = comment_as_json;
-        
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+        Object content = entity.getProperty("content");
+        Object timestamp = entity.getProperty("timestamp");
+        Comment c = new Comment("None", content, timestamp);
+        messages.add(commentToJson(c));
     }
-    //our finished json 
-    String json = new Gson().toJson(json_comment_array);
+    Gson gson = new Gson();
+    String json = gson.toJson(messages);
+    response.setContentType("application/json;");
     response.getWriter().println(json);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
-    Date current_date = new Date();
+    String user = "None";
     String text = getParameter(request, "comment-input", "");
-    Comment c = new Comment("None", text, current_date);
-    String comment_as_json  = commentToJson(c);
-    messages.add(comment_as_json);
+    
+    Entity comment = commentToEntity("None", text);
 
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(comment);
+    response.sendRedirect("/index.html");
 
-    // Respond with the result.
-    response.setContentType("application/json;");
-    response.getWriter().println(comment_as_json);
   }
 
 
@@ -80,4 +83,14 @@ public class DataServlet extends HttpServlet {
         }
             return value;
   }
+
+  private Entity commentToEntity(String user, String content){
+    Entity commentEntity = new Entity("Comment");
+    long current_time = System.currentTimeMillis();
+    commentEntity.setProperty("user", user);
+    commentEntity.setProperty("timestamp", current_time);
+    commentEntity.setProperty("content", content);
+    return commentEntity;
+  }
+
 }

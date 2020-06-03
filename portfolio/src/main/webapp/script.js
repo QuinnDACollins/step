@@ -48,6 +48,11 @@ async function fetchCommentContent() {
   fetch('/data')  // sends a request to /my-data-url
 .then(response => response.json()) // parses the response as JSON
 .then((comment_array) => { // now we can reference the fields in myObject!
-  console.log(comment_array[1]);
+    var i = 0;
+    document.getElementById("comment-area").innerHTML = ""
+    for(i = 0; i < comment_array.length; i++){
+        var c = JSON.parse(comment_array[i]);
+        document.getElementById("comment-area").innerHTML += "<p>" + c.content +  "<p>";
+    }
 });
 }
