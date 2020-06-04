@@ -20,14 +20,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import java.io.IOException;
+import com.google.appengine.api.datastore.QueryResultList;
 
+import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,15 +42,36 @@ public class DataServlet extends HttpServlet {
     ArrayList<String> messages = new ArrayList<>();
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-    PreparedQuery results = datastore.prepare(query);
-    for (Entity entity : results.asIterable()) {
-        Object content = entity.getProperty("content");
-        Object timestamp = entity.getProperty("timestamp");
-        Comment c = new Comment("None", content, timestamp);
-        messages.add(commentToJson(c));
+    String comment_num_string = request.getParameter("num");
+    String cursor = request.getParameter("cursor");    
+    
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(3);
+    if(cursor != null){
+        fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
     }
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+   
+
+
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    PreparedQuery resultsPQ = datastore.prepare(query);
+
+    QueryResultList<Entity> results;
+    try {
+      results = resultsPQ.asQueryResultList(fetchOptions);
+    } catch (IllegalArgumentException e) {
+        response.sendRedirect("/");
+        return;
+    }
+    for (Entity entity : results) {
+ 
+            Object content = entity.getProperty("content");
+            Object timestamp = entity.getProperty("timestamp");
+            Comment c = new Comment("None", content, timestamp);
+            messages.add(commentToJson(c));
+    }
+    String cursorString = results.getCursor().toWebSafeString();
+    messages.add(cursorString);
     Gson gson = new Gson();
     String json = gson.toJson(messages);
     response.setContentType("application/json;");
