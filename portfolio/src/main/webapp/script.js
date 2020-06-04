@@ -44,3 +44,8 @@ function addFact() {
 
 }
 
+async function getHelloWorldText() {
+  const response = await fetch('/data');
+  const hello_text = await response.text();
+  document.body.innerHTML += hello_text;
+}
