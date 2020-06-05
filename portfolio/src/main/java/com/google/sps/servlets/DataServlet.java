@@ -19,6 +19,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap; 
+
+import java.lang.Integer;
 
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -39,21 +42,37 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    ArrayList<String> messages = new ArrayList<>();
+    HashMap<Integer, String> cursors = new HashMap<Integer, String>();
+    int pageCount = 0;
+    
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String comment_num_string = request.getParameter("num");
-    String cursor = request.getParameter("cursor");    
-    
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(3);
-    if(cursor != null){
-        fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
+    ArrayList<String> messages = new ArrayList<>();
+
+    String nextPage = request.getParameter("next");
+    String cursor = request.getParameter("cursor"); 
+    pageCount += 1;
+    if(cursor != null && nextPage.equals("false")){
+        pageCount -= 2;
+        cursor = cursors.get(pageCount);
     }
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
+    if(cursor != null){
+
+        fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
+    } else {
+        cursors.put(pageCount, "");
+    }
+
+
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-   
-
-
+    
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    if(nextPage == "false"){
+        query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
+    }
     PreparedQuery resultsPQ = datastore.prepare(query);
 
     QueryResultList<Entity> results;
@@ -71,6 +90,7 @@ public class DataServlet extends HttpServlet {
             messages.add(commentToJson(c));
     }
     String cursorString = results.getCursor().toWebSafeString();
+    cursors.put(pageCount, cursorString);
     messages.add(cursorString);
     Gson gson = new Gson();
     String json = gson.toJson(messages);

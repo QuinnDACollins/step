@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload = "fetchCommentContent()">
+  <body onload = "fetchCommentContent('')">
     <div id="fact-box-1"></div>
     <div id="content">
       <h1>Quinn Collins!</h1>
@@ -19,10 +19,14 @@
       <a href="https://github.com/QuinnDACollins"><img class = "widget" src = "images/github.png"/></a> <a href = "https://www.linkedin.com/in/quinn-collins-28a46416a/"><img class = "widget" src = "images/linkedin.png"/></a>
 
     </div>
-        <form id = "comment-form" method = "POST" action = "/data">
-            <textarea name = "comment-input" form = "comment-form"></textarea>
-            <input type="submit">
-        </form>
+    <input type="hidden" id="cursor" name="cursor" value="">
+    <form id = "comment-form" method = "POST" action = "/data">
+        <textarea name = "comment-input" form = "comment-form"></textarea>
+        <input type="submit">
+    </form>
+    <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'true')">Next Page</button>
+    <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'false')">Prev Page</button>
+
     <div id = "comment-area">
         
     </div>
