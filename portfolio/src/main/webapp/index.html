@@ -23,10 +23,13 @@
     <form id = "comment-form" method = "POST" action = "/data">
         <textarea name = "comment-input" form = "comment-form"></textarea>
         <input type="submit">
+        <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'true')">Next Page</button>
+        <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'false')">Prev Page</button>
+            
     </form>
-    <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'true')">Next Page</button>
-    <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'false')">Prev Page</button>
-
+    <form id = "login-form" action="">
+    <input type="submit" value="Login" />
+    </form>
     <div id = "comment-area">
         
     </div>

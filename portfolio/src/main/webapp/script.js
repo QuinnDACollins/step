@@ -58,3 +58,24 @@ async function fetchCommentContent(cursor, next) {
     document.getElementById("cursor").value = commentArray[commentArray.length -1];
 });
 }
+
+async function checkLogin() {
+    fetch('/log')  // sends a request to /my-data-url
+  .then(response => response.toString() // parses the response as JSON
+  .then((logged) => { // now we can reference the fields in myObject!
+      if(logged == "in"){
+        console.log(logged);
+          document.getElementById("comment-form").removeAttribute("hidden");
+          document.getElementById("login-form").setAttribute("hidden", "true");
+      } else {
+        console.log(logged);
+        document.getElementById("comment-form").setAttribute("hidden", "true");
+        document.getElementById("login-form").removeAttribute("hidden");
+        document.getElementById("login-form").setAttribute("action", logged);
+      }
+  });
+  }
+
+window.addEventListener("load", myInit, true); function myInit(){
+    checkLogin()
+}
