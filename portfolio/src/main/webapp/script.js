@@ -15,6 +15,10 @@
 /**
  * Adds a fact greeting to the page.
  */
+
+window.addEventListener("load", myInit, true); function myInit(){
+  checkLogin()
+}
   const facts =
       ['I\'ve read all of One Piece', 'I like Winnie the Pooh!', 'Favourite pianist is either Ahmad Jamal or Ryo Fukui', 'Took 2 years of Chinese!', 'My cat\'s name is Kai!', 'I interned at Google!', 'Why are these sideways!?', 'I have 2 brothers!', 'I like to bake pastries!'];
 
@@ -61,21 +65,17 @@ async function fetchCommentContent(cursor, next) {
 
 async function checkLogin() {
     fetch('/log')  // sends a request to /my-data-url
-  .then(response => response.toString() // parses the response as JSON
+  .then(response => response.json()) // parses the response as JSON
   .then((logged) => { // now we can reference the fields in myObject!
-      if(logged == "in"){
-        console.log(logged);
-          document.getElementById("comment-form").removeAttribute("hidden");
-          document.getElementById("login-form").setAttribute("hidden", "true");
-      } else {
+      if(logged.loginUrl != ""){
         console.log(logged);
         document.getElementById("comment-form").setAttribute("hidden", "true");
         document.getElementById("login-form").removeAttribute("hidden");
-        document.getElementById("login-form").setAttribute("action", logged);
+        document.getElementById("login-form").setAttribute("action", logged.loginUrl);
+      } else {
+        console.log(logged);
+        document.getElementById("comment-form").removeAttribute("hidden");
+        document.getElementById("login-form").setAttribute("hidden", "true");
       }
   });
   }
-
-window.addEventListener("load", myInit, true); function myInit(){
-    checkLogin()
-}

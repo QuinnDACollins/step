@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload = "fetchCommentContent('')">
+  <body onload = "fetchCommentContent('', '')">
     <div id="fact-box-1"></div>
     <div id="content">
       <h1>Quinn Collins!</h1>
@@ -28,10 +28,14 @@
             
     </form>
     <form id = "login-form" action="">
-    <input type="submit" value="Login" />
+      <input type="submit" value="Login" />
     </form>
+
+    <form id = "logout-form" action="">
+      <input type="submit" value="Logout" />
+    </form>    
+    
     <div id = "comment-area">
-        
     </div>
     <div id="fact-box-2"></div>
     

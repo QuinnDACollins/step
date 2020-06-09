@@ -45,16 +45,21 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/log")
 public class LoginServlet extends HttpServlet {
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      response.setContentType("application/json");
 
-    UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
-      response.getWriter().println("in");
+      UserService userService = UserServiceFactory.getUserService();
+      if (!userService.isUserLoggedIn()) {
+        String urlToRedirectToAfterUserLogsOut = "https://www.google.com";
+        String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsOut);
+        response.getWriter().println("{\"loginUrl\": \"" + loginUrl + "\",");
+        response.getWriter().println("\"logoutUrl\": \"\"}");
     } else {
-        String loginUrl = userService.createLoginURL("/index.html");
-        response.getWriter().println(loginUrl);
+      String urlToRedirectToAfterUserLogsOut = "https://www.google.com";
+      String loginUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      response.getWriter().println("{\"logoutUrl\": \"" + loginUrl + "\",");
+      response.getWriter().println("\"loginUrl\": \"\"}");
     }
   }
 }
