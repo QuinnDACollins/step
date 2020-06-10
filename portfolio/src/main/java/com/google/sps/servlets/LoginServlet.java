@@ -51,14 +51,14 @@ public class LoginServlet extends HttpServlet {
 
       UserService userService = UserServiceFactory.getUserService();
       if (!userService.isUserLoggedIn()) {
-        String urlToRedirectToAfterUserLogsOut = "https://www.google.com";
+        String urlToRedirectToAfterUserLogsOut = "/";
         String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsOut);
         response.getWriter().println("{\"loginUrl\": \"" + loginUrl + "\",");
         response.getWriter().println("\"logoutUrl\": \"\"}");
     } else {
-      String urlToRedirectToAfterUserLogsOut = "https://www.google.com";
-      String loginUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-      response.getWriter().println("{\"logoutUrl\": \"" + loginUrl + "\",");
+      String urlToRedirectToAfterUserLogsOut = "/";
+      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      response.getWriter().println("{\"logoutUrl\": \"" + logoutUrl + "\",");
       response.getWriter().println("\"loginUrl\": \"\"}");
     }
   }

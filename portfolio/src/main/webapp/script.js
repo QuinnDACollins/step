@@ -70,12 +70,15 @@ async function checkLogin() {
       if(logged.loginUrl != ""){
         console.log(logged);
         document.getElementById("comment-form").setAttribute("hidden", "true");
-        document.getElementById("login-form").removeAttribute("hidden");
-        document.getElementById("login-form").setAttribute("action", logged.loginUrl);
+        document.getElementById("logout-link").setAttribute("hidden", "true");
+        document.getElementById("login-link").removeAttribute("hidden");
+        document.getElementById("login-link").setAttribute("href", logged.loginUrl);
       } else {
         console.log(logged);
         document.getElementById("comment-form").removeAttribute("hidden");
-        document.getElementById("login-form").setAttribute("hidden", "true");
+        document.getElementById("login-link").setAttribute("hidden", "true");
+        document.getElementById("logout-link").removeAttribute("hidden");
+        document.getElementById("logout-link").setAttribute("href", logged.logoutUrl);
       }
   });
   }
