@@ -17,7 +17,7 @@
  */
 
 window.addEventListener("load", myInit, true); function myInit(){
-  checkLogin()
+  checkLogin();
 }
   const facts =
       ['I\'ve read all of One Piece', 'I like Winnie the Pooh!', 'Favourite pianist is either Ahmad Jamal or Ryo Fukui', 'Took 2 years of Chinese!', 'My cat\'s name is Kai!', 'I interned at Google!', 'Why are these sideways!?', 'I have 2 brothers!', 'I like to bake pastries!'];
@@ -81,4 +81,12 @@ async function checkLogin() {
         document.getElementById("logout-link").setAttribute("href", logged.logoutUrl);
       }
   });
+  }
+
+  async function getBlobstoreURL() {
+    fetch('/bsupload-url')  // sends a request to /my-data-url
+    .then(response => response.text()) // parses the response as JSON
+    .then((url) => { // now we can reference the fields in myObject!
+      document.getElementById("comment-form").setAttribute("action", url);
+    });
   }

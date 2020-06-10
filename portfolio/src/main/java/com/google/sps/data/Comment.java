@@ -18,9 +18,33 @@ public final class Comment{
     private final Object user;
     private final Object content;
     private final Object timestamp;
-    public Comment(Object _user, Object _content, Object _timestamp){
+    private final Object fileUrl;
+    public Comment(Object _user, Object _content){
         this.user = _user;
         this.content = _content;
-        this.timestamp = _timestamp;
+        this.timestamp = new Date();
+        this.fileUrl = null;
+    }
+    public Comment(Object _user, Object _content, Object _fileUrl){
+        this.user = _user;
+        this.content = _content;
+        this.fileUrl = _fileUrl;
+        this.timestamp = new Date();
+    }
+
+    public Object getUser(){
+        return this.user;
+    }
+
+    public Object getContent(){
+        return this.content;
+    }
+
+    public Object getFileURL(){
+        return this.fileUrl;
+    }
+
+    public Object getTimestamp(){
+        return this.timestamp;
     }
 }

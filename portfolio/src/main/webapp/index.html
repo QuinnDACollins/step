@@ -19,9 +19,10 @@
       <a href="https://github.com/QuinnDACollins"><img class = "widget" src = "images/github.png"/></a> <a href = "https://www.linkedin.com/in/quinn-collins-28a46416a/"><img class = "widget" src = "images/linkedin.png"/></a>
 
     </div>
-    <input type="hidden" id="cursor" name="cursor" value="">
-    <form id = "comment-form" method = "POST" action = "/data">
+    <input type="hidden" id="cursor" name="cursor" value="" >
+    <form onload ="getBlobstoreURL();" id = "comment-form" method = "POST" action = "" enctype="multipart/form-data">
         <textarea name = "comment-input" form = "comment-form"></textarea>
+        <input type = "file" name="image"/>
         <input type="submit">
         <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'true')">Next Page</button>
         <button value = "" onclick = "fetchCommentContent(document.getElementById('cursor').value, 'false')">Prev Page</button>
