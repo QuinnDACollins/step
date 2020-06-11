@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload = "fetchCommentContent()">
     <div id="fact-box-1"></div>
     <div id="content">
       <h1>Quinn Collins!</h1>
@@ -17,6 +17,14 @@
       <img src = "images/me.jpg" id = "pics" align="left"/>
       <p> I'm very interested in audio! I've implemented dozens of audio manipulation techniques in python including denoisers, sound seperators, classifiers, etc. I'm currently working on a scuffed real time sound seperator that'll help with my jazz transcriptions.</p>
       <a href="https://github.com/QuinnDACollins"><img class = "widget" src = "images/github.png"/></a> <a href = "https://www.linkedin.com/in/quinn-collins-28a46416a/"><img class = "widget" src = "images/linkedin.png"/></a>
+
+    </div>
+        <form id = "comment-form" method = "POST" action = "/data">
+            <textarea name = "comment-input" form = "comment-form"></textarea>
+            <input type="submit">
+        </form>
+    <div id = "comment-area">
+        
     </div>
     <div id="fact-box-2"></div>
     
