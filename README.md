@@ -1,3 +1,1 @@
-
-
-his repo contains my portfolio and STEP projects.
+This repo contains my portfolio and STEP projects.
