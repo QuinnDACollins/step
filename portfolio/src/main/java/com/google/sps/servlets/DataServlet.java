@@ -45,32 +45,29 @@ public class DataServlet extends HttpServlet {
 
     String nextPage = request.getParameter("next");
     String cursor = request.getParameter("cursor"); 
-    
+
     pageCount += 1;
     if(cursor != null && nextPage.equals("false")){
         pageCount -= 2;
         cursor = cursors.get(pageCount);
     }
-
+    //Set a limit to 5 comments per page using FetchOptions
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
+    //If the cursor param isn't null, set our start of query to bad at the cursor
     if(cursor != null){
-
         fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
     } else {
         cursors.put(pageCount, "");
     }
-
-
-
+    //Instantiate datastore so that we can set up a query
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-    if(nextPage == "false"){
+    if(nextPage.equals("false")){
         query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
     }
     PreparedQuery resultsPQ = datastore.prepare(query);
-
     QueryResultList<Entity> results;
+    //Try to assign our results query the fetch options from before.
     try {
       results = resultsPQ.asQueryResultList(fetchOptions);
     } catch (IllegalArgumentException e) {
@@ -78,7 +75,6 @@ public class DataServlet extends HttpServlet {
         return;
     }
     for (Entity entity : results) {
- 
             Object content = entity.getProperty("content");
             Object timestamp = entity.getProperty("timestamp");
             Comment c = new Comment("None", content, timestamp);
