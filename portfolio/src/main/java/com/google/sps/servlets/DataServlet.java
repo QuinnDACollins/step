@@ -83,10 +83,11 @@ public class DataServlet extends HttpServlet {
         return;
     }
     for (Entity entity : results) {
- 
+            Object user = entity.getProperty("user");
             Object content = entity.getProperty("content");
             Object timestamp = entity.getProperty("timestamp");
-            Comment c = new Comment("None", content, timestamp);
+            Object fileUrl = entity.getProperty("fileUrl");
+            Comment c = new Comment(user, content, fileUrl, timestamp);
             messages.add(commentToJson(c));
     }
     String cursorString = results.getCursor().toWebSafeString();

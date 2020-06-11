@@ -39,6 +39,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+
 /**
  * When the user submits the form, Blobstore processes the file upload and then forwards the request
  * to this servlet. This servlet can then process the request using the file URL we get from
@@ -58,8 +61,9 @@ public class FormHandlerServlet extends HttpServlet {
 
 
     // A real codebase would probably store these in Datastore.
-
-    Comment c = new Comment("none", message, imageUrl);
+    UserService userService = UserServiceFactory.getUserService();
+    
+    Comment c = new Comment(userService.getCurrentUser().getEmail(), message, imageUrl);
     Entity comment = commentToEntity(c);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(comment);

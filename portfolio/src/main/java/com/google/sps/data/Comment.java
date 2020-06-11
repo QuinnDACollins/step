@@ -31,6 +31,12 @@ public final class Comment{
         this.fileUrl = _fileUrl;
         this.timestamp = new Date();
     }
+    public Comment(Object _user, Object _content, Object _fileUrl, Object _timestamp){
+        this.user = _user;
+        this.content = _content;
+        this.fileUrl = _fileUrl;
+        this.timestamp = _timestamp;
+    }
 
     public Object getUser(){
         return this.user;
