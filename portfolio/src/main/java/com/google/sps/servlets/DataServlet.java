@@ -36,7 +36,7 @@ import java.util.HashMap;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    HashMap<Integer, String> cursors = new HashMap<Integer, String>();
+    Map<Integer, String> cursors = new HashMap<Integer, String>();
     int pageCount = 0;
     
   @Override
@@ -45,6 +45,7 @@ public class DataServlet extends HttpServlet {
 
     String nextPage = request.getParameter("next");
     String cursor = request.getParameter("cursor"); 
+    
     pageCount += 1;
     if(cursor != null && nextPage.equals("false")){
         pageCount -= 2;
