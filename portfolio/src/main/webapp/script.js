@@ -45,17 +45,21 @@ function addFact() {
 }
 
 async function fetchCommentContent(cursor, next) {
-  fetch('/data?cursor=' + cursor + "&next=" + next)  // sends a request to /my-data-url
+  fetch('/data?cursor=' + cursor + "&next=" + next)  // sends a request to /data URl with a cursor and whether we want next page or not
 .then(response => response.json()) // parses the response as JSON
-.then((commentArray) => { // now we can reference the fields in myObject!
+.then((commentsWithCursorAppended) => { // now we can reference the fields in myObject!
     var i = 0;
     document.getElementById("comment-area").innerHTML = ""
-    for(i = 0; i < commentArray.length - 1; i++){
-        var c = JSON.parse(commentArray[i]);
+    //Grab our cursor from our fetch
+    const cursor = commentsWithCursorAppended[commentsWithCursorAppended.length - 1];
+    //Remove our cursor string from our array of comments
+    const comments = commentsWithCursorAppended.slice(0, commentsWithCursorAppended.length - 1);
+    //iterate through the comments array and put them in our pages HTML
+    for(i = 0; i < comments; i++){
+        var c = JSON.parse(comments[i]);
         document.getElementById("comment-area").innerHTML += "<p>" + c.content +  "<p>";
     }
-
-    document.getElementById("cursor").value = commentArray[commentArray.length -1];
+    document.getElementById("cursor").value = cursor;
 });
 }
 
