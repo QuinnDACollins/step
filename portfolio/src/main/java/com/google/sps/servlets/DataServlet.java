@@ -65,11 +65,11 @@ public class DataServlet extends HttpServlet {
     if(nextPage.equals("false")){
         query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
     }
-    PreparedQuery resultsPQ = datastore.prepare(query);
+    PreparedQuery resultsPreparedQuery = datastore.prepare(query);
     QueryResultList<Entity> results;
     //Try to assign our results query the fetch options from before.
     try {
-      results = resultsPQ.asQueryResultList(fetchOptions);
+      results = resultsPreparedQuery.asQueryResultList(fetchOptions);
     } catch (IllegalArgumentException e) {
         response.sendRedirect("/");
         return;
