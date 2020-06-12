@@ -73,8 +73,20 @@ body {
     height: 40px
 }
 
-#comment-tile {
-    font-size: 12px;
-    font-family: sans-serif;
+#comment-area{
+    margin-left: 33%;
+    margin-right: 33%;
+        font-family: sans-serif;
     color: #FFFFFF;
+}
+.comment-tile {
+    font-size: 12px;
+
+
+
+}
+
+.comment-image {
+    width: 10%;
+    height: 10%;
 }
