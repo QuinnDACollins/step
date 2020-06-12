@@ -57,7 +57,7 @@ async function fetchCommentContent(cursor, next) {
     document.getElementById("comment-area").innerHTML = ""
     for(i = 0; i < commentArray.length - 1; i++){
         var c = JSON.parse(commentArray[i]);
-        document.getElementById("comment-area").innerHTML += "<p>" + c.user + "<br>" + c.content + "<img src = '" + c.fileUrl +   "'/><p>";
+        document.getElementById("comment-area").innerHTML += "<p class = 'comment-tile'>" + c.user + "<br>" + c.content + "<img class = 'comment-image' src = '" + c.fileUrl +   "'/><p>";
     }
 
     document.getElementById("cursor").value = commentArray[commentArray.length -1];
