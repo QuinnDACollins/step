@@ -50,6 +50,13 @@ public final class FindMeetingQuery {
       return avail;
     }
     avail.add(TimeRange.fromStartEnd(s, t.get(0).start(), false));
+    if(t.size() > 1){
+      if(t.get(1).start() < t.get(0).end()){
+        if(t.get(1).end() > t.get(0).end()){
+          t.remove(0);
+        }
+      }
+    }
     int end = t.get(0).end();
     t.remove(0);
     return getNextTime(end, t, avail);
