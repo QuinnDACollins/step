@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.lang.Object;
 public final class FindMeetingQuery {
+  MeetingRequest r;
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+      r = request;
     //No Attendees, anytime should work
     if(request.getAttendees().isEmpty()){
       Collection<TimeRange> w = new ArrayList<TimeRange>(Arrays.asList(TimeRange.WHOLE_DAY));
@@ -31,35 +33,77 @@ public final class FindMeetingQuery {
     if(request.getDuration() > TimeRange.WHOLE_DAY.duration()){
       return Collections.<TimeRange>emptyList();
     }
-    Collection<TimeRange> available = new ArrayList<TimeRange>();
+
     //get times from out events and then sort.
-    ArrayList<TimeRange> times = new ArrayList<TimeRange>();
-    Iterator<Event> it = events.iterator();
-    while(it.hasNext()){
-      times.add(it.next().getWhen());
-    }
-    Collections.sort(times, TimeRange.ORDER_BY_START);
-    ArrayList<TimeRange> availableTimes = new ArrayList<TimeRange>();
-    getNextTime(TimeRange.START_OF_DAY, times, availableTimes);
+    ArrayList<Event> eventsAsList = new ArrayList<Event>(events);
+
+    Collections.sort(eventsAsList, Event.ORDER_BY_START);
+    ArrayList<TimeRange> recursiveParameter = new ArrayList<TimeRange>();
+    ArrayList<TimeRange> availableTimes = new ArrayList<TimeRange>(getNextTime(TimeRange.START_OF_DAY, eventsAsList, recursiveParameter));
     return availableTimes;
   }
 
-  private Collection<TimeRange> getNextTime(int s, ArrayList<TimeRange> t, Collection<TimeRange> avail){
-    if(t.isEmpty()){
-      avail.add(TimeRange.fromStartEnd(s, TimeRange.END_OF_DAY, true));
+  private Collection<TimeRange> getNextTime(int s, ArrayList<Event> e, Collection<TimeRange> avail){
+    while((!e.isEmpty()) && (!attending(e.get(0)))){
+      e.remove(0);
+    }
+    if(e.isEmpty()){
+      if(checkAvailability(s, TimeRange.END_OF_DAY, r.getDuration())){
+        avail.add(TimeRange.fromStartEnd(s, TimeRange.END_OF_DAY, true));
+      }
       return avail;
     }
-    avail.add(TimeRange.fromStartEnd(s, t.get(0).start(), false));
-    if(t.size() > 1){
-      if(t.get(1).start() < t.get(0).end()){
-        if(t.get(1).end() > t.get(0).end()){
-          t.remove(0);
+    TimeRange currentEventTimeRange = e.get(0).getWhen();
+    if(e.size() > 1){
+      TimeRange nextEventTimeRange = e.get(1).getWhen();
+      if(overlapping(currentEventTimeRange, nextEventTimeRange)){
+        if(nested(currentEventTimeRange, nextEventTimeRange)){         
+          e.remove(1);
+        } else {
+          e.remove(0);
         }
+        currentEventTimeRange = TimeRange.fromStartEnd(currentEventTimeRange.start(), e.get(0).getWhen().end(), true);
       }
     }
-    int end = t.get(0).end();
-    t.remove(0);
-    return getNextTime(end, t, avail);
+    if(checkAvailability(s, currentEventTimeRange.start(), r.getDuration())){
+        avail.add(TimeRange.fromStartEnd(s, currentEventTimeRange.start(), false));
+    }
+    int end = e.get(0).getWhen().end();
+    e.remove(0);
+    return getNextTime(end, e, avail);
+  }
+
+  //Checks if anyone in a meeting request is attending a specific Event
+  private boolean attending(Event e){
+  ArrayList<String> meetingAttendees = new ArrayList<String>(r.getAttendees());
+  for(int i = 0; i < meetingAttendees.size(); i++){
+    if(e.getAttendees().contains(meetingAttendees.get(i))){
+      return true;
+    }
+  }
+  return false;
+  }
+  private boolean checkAvailability(long start, long end, long duration){
+    if(end - start >= duration){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean overlapping(TimeRange a, TimeRange b){
+    if(b.start() < a.end()){
+        return true;
+      }
+    return false;
+  }
+  //only call AFTER overlapping has been seen as true.
+  private boolean nested(TimeRange a, TimeRange b){
+    if(b.end() < a.end()){
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

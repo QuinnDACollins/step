@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
+import java.util.Comparator;
 /**
  * Event is the container class for when a specific group of people are meeting and are therefore
  * busy. Events are considered read-only.
@@ -88,6 +88,12 @@ public final class Event {
     return other instanceof Event && equals(this, (Event) other);
   }
 
+  public static final Comparator<Event> ORDER_BY_START = new Comparator<Event>() {
+    @Override
+    public int compare(Event a, Event b) {
+      return Long.compare(a.getWhen().start(), b.getWhen().start());
+    }
+  };
   private static boolean equals(Event a, Event b) {
     // {@code attendees} must be a set for equals to work as expected. According to the {@code Set}
     // interface documentation, equals will check for set-equality across all set implementations.
