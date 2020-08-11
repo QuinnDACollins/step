@@ -11,43 +11,78 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-package com.google.sps.servlets;
-import com.google.sps.data.Comment;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.QueryResultList;v
+import com.google.gson.Gson;
+package com.google.sps.servlets;
+import com.google.sps.data.Comment;
 import java.io.IOException;
-
+import java.lang.Integer;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap; 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    ArrayList<String> messages = new ArrayList<>();
+    Map<Integer, String> cursors = new HashMap<Integer, String>();
+    int pageCount = 0;
+    
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    ArrayList<String> messages = new ArrayList<>();
+
+    String nextPage = request.getParameter("next");
+    String cursor = request.getParameter("cursor"); 
+
+    pageCount += 1;
+    if(cursor != null && nextPage.equals("false")){
+        pageCount -= 2;
+        cursor = cursors.get(pageCount);
+    }
+    //Set a limit to 5 comments per page using FetchOptions
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
+    //If the cursor param isn't null, set our start of query to bad at the cursor
+    if(cursor != null){
+        fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
+    } else {
+        cursors.put(pageCount, "");
+    }
+    //Instantiate datastore so that we can set up a query
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-    PreparedQuery results = datastore.prepare(query);
-    for (Entity entity : results.asIterable()) {
-        Object content = entity.getProperty("content");
-        Object timestamp = entity.getProperty("timestamp");
-        Comment c = new Comment("None", content, timestamp);
-        messages.add(commentToJson(c));
+    if(nextPage.equals("false")){
+        query = new Query("Comment").addSort("timestamp", SortDirection.ASCENDING);
     }
+    PreparedQuery resultsPreparedQuery = datastore.prepare(query);
+    QueryResultList<Entity> results;
+    //Try to assign our results query the fetch options from before.
+    try {
+      results = resultsPreparedQuery.asQueryResultList(fetchOptions);
+    } catch (IllegalArgumentException e) {
+        response.sendRedirect("/");
+        return;
+    }
+    for (Entity entity : results) {
+            Object content = entity.getProperty("content");
+            Object timestamp = entity.getProperty("timestamp");
+            Comment c = new Comment("None", content, timestamp);
+            messages.add(commentToJson(c));
+    }
+    String cursorString = results.getCursor().toWebSafeString();
+    cursors.put(pageCount, cursorString);
+    messages.add(cursorString);
     Gson gson = new Gson();
     String json = gson.toJson(messages);
     response.setContentType("application/json;");

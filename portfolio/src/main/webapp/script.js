@@ -30,29 +30,56 @@ function addFact() {
   const fact = facts[factIndex];
   facts.splice(factIndex, 1);
   // Add it to the page, randomly selecting one of 2 divs to add it to
-  const rand_padding = Math.floor(Math.random() * 100)
-  const fact_element = document.createElement('div');
-  fact_element.setAttribute("class", "fact-text");
-  fact_element.setAttribute("style", "margin-left: "  + rand_padding.toString() + "%;");
-  fact_element.innerText = "\n" + fact;
+  const randPadding = Math.floor(Math.random() * 100)
+  const factElement = document.createElement('div');
+  factElement.setAttribute("class", "fact-text");
+  factElement.setAttribute("style", "margin-left: "  + randPadding.toString() + "%;");
+  factElement.innerText = "\n" + fact;
 
   if (Math.floor(Math.random() * 2) == 0) {
-      document.getElementById("fact-box-1").append(fact_element);
+      document.getElementById("fact-box-1").append(factElement);
   } else {
-      document.getElementById("fact-box-2").append(fact_element);
+      document.getElementById("fact-box-2").append(factElement);
   }
 
 }
 
-async function fetchCommentContent() {
-  fetch('/data')  // sends a request to /my-data-url
+async function fetchCommentContent(cursor, next) {
+  fetch('/data?cursor=' + cursor + "&next=" + next)  // sends a request to /data URl with a cursor and whether we want next page or not
 .then(response => response.json()) // parses the response as JSON
-.then((comment_array) => { // now we can reference the fields in myObject!
+.then((commentsWithCursorAppended) => { // now we can reference the fields in myObject!
     var i = 0;
     document.getElementById("comment-area").innerHTML = ""
-    for(i = 0; i < comment_array.length; i++){
-        var c = JSON.parse(comment_array[i]);
+    //Grab our cursor from our fetch
+    const cursor = commentsWithCursorAppended[commentsWithCursorAppended.length - 1];
+    //Remove our cursor string from our array of comments
+    const comments = commentsWithCursorAppended.slice(0, commentsWithCursorAppended.length - 1);
+    //iterate through the comments array and put them in our pages HTML
+    for(i = 0; i < comments; i++){
+        var c = JSON.parse(comments[i]);
         document.getElementById("comment-area").innerHTML += "<p>" + c.content +  "<p>";
     }
+    document.getElementById("cursor").value = cursor;
 });
+}
+
+async function checkLogin() {
+    fetch('/log')  // sends a request to /my-data-url
+  .then(response => response.toString() // parses the response as JSON
+  .then((logged) => { // now we can reference the fields in myObject!
+      if(logged == "in"){
+        console.log(logged);
+          document.getElementById("comment-form").removeAttribute("hidden");
+          document.getElementById("login-form").setAttribute("hidden", "true");
+      } else {
+        console.log(logged);
+        document.getElementById("comment-form").setAttribute("hidden", "true");
+        document.getElementById("login-form").removeAttribute("hidden");
+        document.getElementById("login-form").setAttribute("action", logged);
+      }
+  });
+  }
+
+window.addEventListener("load", myInit, true); function myInit(){
+    checkLogin()
 }
